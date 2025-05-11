@@ -35,6 +35,14 @@ export default tseslint.config(
   {
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
     },
   },
 );
