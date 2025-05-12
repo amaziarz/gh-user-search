@@ -9,12 +9,10 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import type { GithubUser } from './types';
-
-import GithubUsersList from './GithubUsersList';
+import GithubUserList from './GithubUserList';
 import { useGithubUsersSearch } from './useGithubUsersSearch';
 
-const DEBOUNCE_DELAY = 2000;
+const DEBOUNCE_DELAY = 500;
 
 type FormValues = {
   username: string;
@@ -46,9 +44,7 @@ export default function GithubUserSearchList() {
     }
   }, [debouncedUsername, refetch]);
 
-  const allUsers: GithubUser[] = isSuccess
-    ? data.pages.flatMap((page) => page.items)
-    : [];
+  const allUsers = isSuccess ? data.pages.flatMap((page) => page.items) : [];
 
   const totalCount =
     isSuccess && data.pages.length > 0 ? data.pages[0].total_count : 0;
@@ -109,7 +105,7 @@ export default function GithubUserSearchList() {
               pageStart={0}
               useWindow={false}
             >
-              <GithubUsersList users={allUsers} />
+              <GithubUserList users={allUsers} />
             </InfiniteScroll>
           </Box>
         </>

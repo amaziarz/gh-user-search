@@ -5,20 +5,20 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
-import type { GithubUser } from './types';
+import type { GithubUser } from './githubApiSchema';
 
 type Props = {
   users: GithubUser[];
 };
 
-export default function GithubUserSearchList({ users }: Props) {
+export default function GithubUserList({ users }: Props) {
   return (
     <List>
       {users.map((user) => (
         <ListItem key={user.id}>
           <ListItemButton component="a" href={user.html_url} target="_blank">
             <ListItemAvatar>
-              <Avatar alt={user.login} src={user.avatar_url} />
+              <Avatar src={user.avatar_url} alt={user.login} />
             </ListItemAvatar>
             <ListItemText primary={user.login} secondary={user.type} />
           </ListItemButton>
