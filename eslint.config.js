@@ -43,6 +43,14 @@ export default tseslint.config(
           },
         },
       ],
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        {
+          allowBoolean: true,
+          allowNullish: true,
+          allowNumber: true,
+        },
+      ],
     },
   },
 );
