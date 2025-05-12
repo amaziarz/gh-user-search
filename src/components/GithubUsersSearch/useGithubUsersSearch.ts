@@ -9,7 +9,15 @@ import {
 const getQueryKey = (username: string) => ['githubUsers', username] as const;
 const PER_PAGE = 30;
 
-export function useGithubUsersSearch(username: string) {
+type UseGithubUsersSearchParams = {
+  username: string;
+  enabled?: boolean;
+};
+
+export function useGithubUsersSearch({
+  username,
+  enabled = true,
+}: UseGithubUsersSearchParams) {
   return useInfiniteQuery({
     queryKey: getQueryKey(username),
     queryFn: ({ pageParam }) => searchGithubUsers(username, pageParam),
@@ -20,7 +28,7 @@ export function useGithubUsersSearch(username: string) {
       }
       return allPages.length + 1;
     },
-    enabled: !!username,
+    enabled,
   });
 }
 

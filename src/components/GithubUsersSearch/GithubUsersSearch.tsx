@@ -1,12 +1,13 @@
-import { useDebounce } from '@/utils/useDebounce';
+import { yupResolver } from '@hookform/resolvers/yup';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, useEffect } from 'react';
+import { useForm, useController } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroller';
+import * as yup from 'yup';
 
 import GithubUsersList from './GithubUsersList';
 import InfoMessage from './InfoMessage';
@@ -14,18 +15,44 @@ import { useGithubUsersSearch } from './useGithubUsersSearch';
 
 const DEBOUNCE_DELAY = 500;
 
-type FormValues = {
-  username: string;
-};
+const formSchema = yup.object({
+  username: yup
+    .string()
+    .required('Username is required')
+    .min(3, 'Minimum 3 characters'),
+});
 
 export default function GithubUsersSearch() {
-  const { register, watch } = useForm<FormValues>({
+  const {
+    control,
+    formState: { errors },
+    trigger,
+  } = useForm<yup.InferType<typeof formSchema>>({
     defaultValues: {
       username: '',
     },
+    resolver: yupResolver(formSchema),
+    mode: 'onBlur',
   });
-  const username = watch('username');
-  const debouncedUsername = useDebounce(username, DEBOUNCE_DELAY);
+  const { field: usernameField } = useController({
+    name: 'username',
+    control,
+  });
+  const { value: username } = usernameField;
+  const [debouncedUsername, setDebouncedUsername] = useState(username);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedUsername(username);
+      if (username) {
+        void trigger('username');
+      }
+    }, DEBOUNCE_DELAY);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [username, trigger]);
 
   const {
     data,
@@ -35,14 +62,10 @@ export default function GithubUsersSearch() {
     hasNextPage,
     isFetching,
     isSuccess,
-    refetch,
-  } = useGithubUsersSearch(debouncedUsername);
-
-  useEffect(() => {
-    if (debouncedUsername) {
-      void refetch();
-    }
-  }, [debouncedUsername, refetch]);
+  } = useGithubUsersSearch({
+    username: debouncedUsername,
+    enabled: !!debouncedUsername && !errors.username,
+  });
 
   const users = isSuccess ? data.pages.flatMap((page) => page.items) : [];
   const totalCount =
@@ -67,15 +90,19 @@ export default function GithubUsersSearch() {
         }}
       >
         <TextField
-          {...register('username')}
+          {...usernameField}
           label="GitHub Username"
           placeholder="Search for a GitHub user..."
           autoComplete="off"
+          error={!!errors.username}
+          helperText={errors.username?.message}
           slotProps={{
             input: {
               endAdornment: (
                 <InputAdornment position="end">
-                  {isFetching && <CircularProgress size={20} />}
+                  {(isFetching || username !== debouncedUsername) && (
+                    <CircularProgress size={20} />
+                  )}
                 </InputAdornment>
               ),
               startAdornment: (
