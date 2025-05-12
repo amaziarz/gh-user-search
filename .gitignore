@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.vitest-cache
 
 # Editor directories and files
 .vscode/*
