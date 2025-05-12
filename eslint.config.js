@@ -13,26 +13,14 @@ export default tseslint.config(
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
-  perfectionist.configs['recommended-natural'],
   reactHooks.configs['recommended-latest'],
   reactRefresh.configs.vite,
   pluginQuery.configs['flat/recommended'],
   prettier,
   {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-      parserOptions: {
-        projectService: {
-          allowDefaultProject: ['eslint.config.js', 'vite.config.ts'],
-        },
-        tsconfigRootDir: import.meta.dirname,
-      },
+    plugins: {
+      perfectionist,
     },
-  },
-  includeIgnoreFile(join(import.meta.dirname, '.gitignore')),
-  {
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/no-misused-promises': [
@@ -51,6 +39,21 @@ export default tseslint.config(
           allowNumber: true,
         },
       ],
+      'perfectionist/sort-imports': 'error',
     },
   },
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['eslint.config.js', 'vite.config.ts'],
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  includeIgnoreFile(join(import.meta.dirname, '.gitignore')),
 );
