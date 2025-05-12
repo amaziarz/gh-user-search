@@ -11,42 +11,30 @@ type Props = {
   error: Error | null;
 };
 
-export default function InfoMessage({
-  username,
-  status,
-  usersCount,
-  totalCount,
-  error,
-}: Props) {
+export default function InfoMessage(props: Props) {
   // pattern matching technique
-  const message = match({
-    status,
-    usersCount,
-    totalCount,
-    error,
-    username,
-  })
+  const message = match(props)
     .with({ username: P.string.length(0) }, () => '')
     .with(
       { status: 'success', usersCount: P.number.gt(0) },
-      () =>
+      ({ totalCount, username, usersCount }) =>
         `Found ${totalCount} users matching "${username}" ${totalCount > usersCount ? `, showing ${usersCount}` : ''}`,
     )
     .with(
       { status: 'success', usersCount: 0 },
-      () => `No users found for "${username}".`,
+      ({ username }) => `No users found for "${username}".`,
     )
     .with(
       { status: 'error', error: P.nonNullable },
-      ({ error }) => `Error fetching users: ${error.message}`,
+      ({ error }) => error.message,
     )
     .otherwise(() => '');
 
   return message ? (
     <Typography
-      color={error ? 'error' : undefined}
-      sx={{ ml: 1, mt: 1 }}
       variant="body2"
+      color={props.error ? 'error' : undefined}
+      sx={{ pl: 0.5 }}
     >
       {message}
     </Typography>

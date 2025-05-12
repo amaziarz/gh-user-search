@@ -12,7 +12,7 @@ const PER_PAGE = 30;
 export function useGithubUsersSearch(username: string) {
   return useInfiniteQuery({
     queryKey: getQueryKey(username),
-    queryFn: ({ pageParam = 1 }) => searchGithubUsers(username, pageParam),
+    queryFn: ({ pageParam }) => searchGithubUsers(username, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.items.length < PER_PAGE || lastPage.incomplete_results) {

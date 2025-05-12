@@ -50,12 +50,27 @@ export default function GithubUsersSearch() {
   const shouldRenderUsersList = !!username && isSuccess && users.length > 0;
 
   return (
-    <Box component="section">
-      <Box autoComplete="off" component="form" noValidate sx={{ mt: 2 }}>
+    <Box
+      component="section"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        py: 2,
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+        }}
+      >
         <TextField
           {...register('username')}
           label="GitHub Username"
           placeholder="Search for a GitHub user..."
+          autoComplete="off"
           slotProps={{
             input: {
               endAdornment: (
@@ -79,17 +94,17 @@ export default function GithubUsersSearch() {
             },
           }}
         />
+        <InfoMessage
+          username={username}
+          status={status}
+          usersCount={users.length}
+          totalCount={totalCount}
+          error={error}
+        />
       </Box>
-      <InfoMessage
-        username={username}
-        status={status}
-        usersCount={users.length}
-        totalCount={totalCount}
-        error={error}
-      />
       {shouldRenderUsersList && (
         <>
-          <Box sx={{ maxHeight: '70vh', mt: 2, overflow: 'auto' }}>
+          <Box sx={{ maxHeight: '70vh', overflow: 'auto' }}>
             <InfiniteScroll
               loadMore={() => hasNextPage && !isFetching && fetchNextPage()}
               hasMore={hasNextPage}
