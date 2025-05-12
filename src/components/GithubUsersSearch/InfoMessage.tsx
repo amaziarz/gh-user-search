@@ -6,7 +6,7 @@ import { match, P } from 'ts-pattern';
 type Props = {
   username: string;
   status: QueryStatus;
-  itemsCount: number;
+  usersCount: number;
   totalCount: number;
   error: Error | null;
 };
@@ -14,26 +14,26 @@ type Props = {
 export default function InfoMessage({
   username,
   status,
-  itemsCount,
+  usersCount,
   totalCount,
   error,
 }: Props) {
   // pattern matching technique
   const message = match({
     status,
-    itemsCount,
+    usersCount,
     totalCount,
     error,
     username,
   })
     .with({ username: P.string.length(0) }, () => '')
     .with(
-      { status: 'success', itemsCount: P.number.gt(0) },
+      { status: 'success', usersCount: P.number.gt(0) },
       () =>
-        `Found ${totalCount} users matching "${username}" ${totalCount > itemsCount ? `, showing ${itemsCount}` : ''}`,
+        `Found ${totalCount} users matching "${username}" ${totalCount > usersCount ? `, showing ${usersCount}` : ''}`,
     )
     .with(
-      { status: 'success', itemsCount: 0 },
+      { status: 'success', usersCount: 0 },
       () => `No users found for "${username}".`,
     )
     .with(

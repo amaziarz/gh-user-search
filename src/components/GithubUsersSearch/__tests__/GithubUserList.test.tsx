@@ -3,7 +3,7 @@ import { test, expect } from 'vitest';
 
 import type { GithubUser } from '../githubApiSchema';
 
-import GithubUserSearchList from '../GithubUserList';
+import GithubUserSearchList from '../GithubUsersList';
 
 const mockUsers = [
   {

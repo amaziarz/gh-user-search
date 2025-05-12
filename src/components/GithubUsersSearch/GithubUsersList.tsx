@@ -11,7 +11,7 @@ type Props = {
   users: GithubUser[];
 };
 
-export default function GithubUserList({ users }: Props) {
+export default function GithubUsersList({ users }: Props) {
   return (
     <List>
       {users.map((user) => (

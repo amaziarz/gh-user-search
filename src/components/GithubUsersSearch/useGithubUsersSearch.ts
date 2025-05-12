@@ -2,8 +2,8 @@ import { apiClient } from '@/utils/apiClient';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import {
-  githubUserSearchResponseSchema,
-  type GithubUserSearchResponse,
+  githubUsersSearchResponseSchema,
+  type GithubUsersSearchResponse,
 } from './githubApiSchema';
 
 const getQueryKey = (username: string) => ['githubUsers', username] as const;
@@ -29,11 +29,11 @@ const GITHUB_API_URL = 'https://api.github.com';
 export async function searchGithubUsers(
   username: string,
   page: number,
-): Promise<GithubUserSearchResponse> {
+): Promise<GithubUsersSearchResponse> {
   try {
     return await apiClient({
       url: `${GITHUB_API_URL}/search/users?q=${username}&page=${page}&per_page=${PER_PAGE}`,
-      schema: githubUserSearchResponseSchema,
+      schema: githubUsersSearchResponseSchema,
     });
   } catch (error) {
     console.error('Error fetching GitHub users:', error);
