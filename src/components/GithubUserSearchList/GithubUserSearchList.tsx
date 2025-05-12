@@ -4,12 +4,12 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import GithubUserList from './GithubUserList';
+import InfoMessage from './InfoMessage';
 import { useGithubUsersSearch } from './useGithubUsersSearch';
 
 const DEBOUNCE_DELAY = 500;
@@ -30,9 +30,9 @@ export default function GithubUserSearchList() {
   const {
     data,
     error,
+    status,
     fetchNextPage,
     hasNextPage,
-    isError,
     isFetching,
     isSuccess,
     refetch,
@@ -80,12 +80,15 @@ export default function GithubUserSearchList() {
           }}
         />
       </Box>
-      {isSuccess && allUsers.length > 0 && (
+      <InfoMessage
+        username={username}
+        status={status}
+        itemsCount={allUsers.length}
+        totalCount={totalCount}
+        error={error}
+      />
+      {!!username && isSuccess && allUsers.length > 0 && (
         <>
-          <Typography sx={{ ml: 1, mt: 1 }} variant="body2">
-            Found {totalCount} users matching "{debouncedUsername}"
-            {totalCount > allUsers.length && `, showing ${allUsers.length}`}
-          </Typography>
           <Box sx={{ maxHeight: '70vh', mt: 2, overflow: 'auto' }}>
             <InfiniteScroll
               hasMore={hasNextPage}
@@ -101,7 +104,7 @@ export default function GithubUserSearchList() {
                   <CircularProgress size={30} />
                 </Box>
               }
-              loadMore={() => hasNextPage && fetchNextPage()}
+              loadMore={() => hasNextPage && !isFetching && fetchNextPage()}
               pageStart={0}
               useWindow={false}
             >
@@ -109,16 +112,6 @@ export default function GithubUserSearchList() {
             </InfiniteScroll>
           </Box>
         </>
-      )}
-      {isSuccess && allUsers.length === 0 && (
-        <Typography sx={{ ml: 1, mt: 1 }} variant="body2">
-          No users found for {debouncedUsername}.
-        </Typography>
-      )}
-      {isError && (
-        <Typography color="error" sx={{ ml: 1, mt: 1 }} variant="body2">
-          Error fetching users: {error.message}
-        </Typography>
       )}
     </Box>
   );

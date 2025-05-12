@@ -1,13 +1,13 @@
 import { server } from '@/test/server';
 import { http, HttpResponse } from 'msw';
-import { it, expect, vi } from 'vitest';
+import { test, expect, vi } from 'vitest';
 import * as yup from 'yup';
 
 import { apiClient } from '../apiClient';
 
 const mockUrl = 'https://api.example.com/data';
 
-it('should throw the status text as error when response is not ok', async () => {
+test('should throw the status text as error when response is not ok', async () => {
   server.use(
     http.get(mockUrl, () => {
       return new HttpResponse(null, { status: 404, statusText: 'Not Found' });
@@ -17,7 +17,7 @@ it('should throw the status text as error when response is not ok', async () => 
   await expect(apiClient({ url: mockUrl })).rejects.toThrow('Not Found');
 });
 
-it('should validate response data with the provided schema', async () => {
+test('should validate response data with the provided schema', async () => {
   const mockData = { name: 'test', id: 123 };
 
   server.use(
@@ -43,7 +43,7 @@ it('should validate response data with the provided schema', async () => {
   expect(result).toEqual(mockData);
 });
 
-it('should throw error when validation fails', async () => {
+test('should throw error when validation fails', async () => {
   const mockData = { name: 'test' };
 
   server.use(
