@@ -75,9 +75,7 @@ export default function GithubUsersSearch() {
     isSuccess && data.pages.length > 0 ? data.pages[0].total_count : 0;
 
   const shouldRenderUsersList =
-    !!debouncedUsername && isSuccess && users.length > 0;
-  const shouldRenderInputLoader =
-    isFetching || (!!username && username !== debouncedUsername);
+    !errors.username && isSuccess && users.length > 0;
 
   return (
     <Box
@@ -107,7 +105,7 @@ export default function GithubUsersSearch() {
             input: {
               endAdornment: (
                 <InputAdornment position="end">
-                  {shouldRenderInputLoader && <CircularProgress size={20} />}
+                  {isFetching && <CircularProgress size={20} />}
                 </InputAdornment>
               ),
               startAdornment: (
