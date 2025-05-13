@@ -135,30 +135,28 @@ export default function GithubUsersSearch() {
         />
       </Box>
       {shouldRenderUsersList && (
-        <>
-          <Box sx={{ maxHeight: '70vh', overflow: 'auto' }}>
-            <InfiniteScroll
-              loadMore={() => hasNextPage && !isFetching && fetchNextPage()}
-              hasMore={hasNextPage}
-              pageStart={0}
-              useWindow={false}
-              loader={
-                <Box
-                  key="loader"
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    p: 2,
-                  }}
-                >
-                  <CircularProgress size={30} />
-                </Box>
-              }
-            >
-              <GithubUsersList users={users} />
-            </InfiniteScroll>
-          </Box>
-        </>
+        <Box sx={{ maxHeight: '70vh', overflow: 'auto' }}>
+          <InfiniteScroll
+            loadMore={() => hasNextPage && !isFetching && fetchNextPage()}
+            hasMore={hasNextPage}
+            pageStart={0}
+            useWindow={false}
+            loader={
+              <Box
+                key="loader"
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  p: 2,
+                }}
+              >
+                <CircularProgress size={30} />
+              </Box>
+            }
+          >
+            <GithubUsersList users={users} />
+          </InfiniteScroll>
+        </Box>
       )}
     </Box>
   );
