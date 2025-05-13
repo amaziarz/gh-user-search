@@ -13,13 +13,18 @@ import GithubUsersList from './GithubUsersList';
 import InfoMessage from './InfoMessage';
 import { useGithubUsersSearch } from './useGithubUsersSearch';
 
-const DEBOUNCE_DELAY = 500;
+const DEBOUNCE_DELAY = 2000;
 
 const formSchema = yup.object({
   username: yup
     .string()
-    .required('Username is required')
-    .min(3, 'Minimum 3 characters'),
+    .transform((value: string) => (value === '' ? undefined : value))
+    .nullable()
+    .test(
+      'min-length',
+      'Minimum 3 characters',
+      (value) => !value || value.length >= 3,
+    ),
 });
 
 export default function GithubUsersSearch() {
@@ -27,7 +32,7 @@ export default function GithubUsersSearch() {
     control,
     formState: { errors },
     trigger,
-  } = useForm<yup.InferType<typeof formSchema>>({
+  } = useForm({
     defaultValues: {
       username: '',
     },
@@ -39,14 +44,12 @@ export default function GithubUsersSearch() {
     control,
   });
   const { value: username } = usernameField;
-  const [debouncedUsername, setDebouncedUsername] = useState(username);
+  const [debouncedUsername, setDebouncedUsername] = useState(username ?? '');
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setDebouncedUsername(username);
-      if (username) {
-        void trigger('username');
-      }
+      setDebouncedUsername(username ?? '');
+      void trigger('username');
     }, DEBOUNCE_DELAY);
 
     return () => {
@@ -70,7 +73,11 @@ export default function GithubUsersSearch() {
   const users = isSuccess ? data.pages.flatMap((page) => page.items) : [];
   const totalCount =
     isSuccess && data.pages.length > 0 ? data.pages[0].total_count : 0;
-  const shouldRenderUsersList = !!username && isSuccess && users.length > 0;
+
+  const shouldRenderUsersList =
+    !!debouncedUsername && isSuccess && users.length > 0;
+  const shouldRenderInputLoader =
+    isFetching || (!!username && username !== debouncedUsername);
 
   return (
     <Box
@@ -100,9 +107,7 @@ export default function GithubUsersSearch() {
             input: {
               endAdornment: (
                 <InputAdornment position="end">
-                  {(isFetching || username !== debouncedUsername) && (
-                    <CircularProgress size={20} />
-                  )}
+                  {shouldRenderInputLoader && <CircularProgress size={20} />}
                 </InputAdornment>
               ),
               startAdornment: (
@@ -122,7 +127,7 @@ export default function GithubUsersSearch() {
           }}
         />
         <InfoMessage
-          username={username}
+          username={debouncedUsername}
           status={status}
           usersCount={users.length}
           totalCount={totalCount}
