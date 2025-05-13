@@ -34,7 +34,7 @@ export default function InfoMessage(props: Props) {
     <Typography
       variant="body2"
       color={props.error ? 'error' : undefined}
-      sx={{ pl: 0.5 }}
+      sx={{ pl: 1 }}
     >
       {message}
     </Typography>

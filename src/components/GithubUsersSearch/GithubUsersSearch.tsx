@@ -30,7 +30,7 @@ const formSchema = yup.object({
 export default function GithubUsersSearch() {
   const {
     control,
-    formState: { errors },
+    formState: { errors, touchedFields },
     trigger,
   } = useForm({
     defaultValues: {
@@ -47,6 +47,10 @@ export default function GithubUsersSearch() {
   const [debouncedUsername, setDebouncedUsername] = useState(username ?? '');
 
   useEffect(() => {
+    if (!touchedFields.username) {
+      return;
+    }
+
     const timeoutId = setTimeout(() => {
       setDebouncedUsername(username ?? '');
       void trigger('username');
@@ -55,7 +59,7 @@ export default function GithubUsersSearch() {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [username, trigger]);
+  }, [username, trigger, touchedFields.username]);
 
   const {
     data,
